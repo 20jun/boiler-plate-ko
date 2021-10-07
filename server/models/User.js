@@ -37,10 +37,11 @@ const userSchema = mongoose.Schema({
 
 // index.js에서 save 하기전에 동작함
 userSchema.pre("save", function (next) {
+  console.log("1User.js");
   // 여기서 this는 위에 있는 userSchema임
   var user = this;
 
-  // 비밀번호가 변경될 때만 작동하게 조건문
+  // 비밀번호가 변경될 때만 작동하게 조건문(회원가입할때는 무조건 True)
   if (user.isModified("password")) {
     // 비밀번호를 암호화 시킨다.
     bcrypt.genSalt(saltRounds, function (err, salt) {
@@ -49,10 +50,12 @@ userSchema.pre("save", function (next) {
       bcrypt.hash(user.password, salt, function (err, hash) {
         if (err) return next(err);
         user.password = hash;
+        console.log("바뀌었을때");
         next();
       });
     });
   } else {
+    console.log("안바뀌었을때");
     next();
   }
 });
@@ -67,6 +70,7 @@ userSchema.methods.comparePassword = function (plainPassword, cb) {
 
 // jsonwebtoken을 이용해서 token을 생성하기
 userSchema.methods.generateToken = function (cb) {
+  console.log("2User.js");
   var user = this;
 
   var token = jwt.sign(user._id.toHexString(), "secretToken");
@@ -79,14 +83,21 @@ userSchema.methods.generateToken = function (cb) {
 };
 
 userSchema.statics.findByToken = function (token, cb) {
+  console.log("4. User.js에서 function(token, cb) 만들어줌");
+  console.log(token);
   var user = this;
 
   // 토큰을 decode 한다.
   jwt.verify(token, "secretToken", function (err, decoded) {
     // 유저 아이디를 이용해서 유저를 찾은 다음에
     // 클라이언트에서 가져온 token과 DB에 보관된 token이 일치하는지 확인
+    console.log("5. User.js jwt.verify에서 토큰을 복호화하여 decoded에 저장");
+    console.log("5. decoded : ", decoded);
 
+    // findOne은 mongoose 기본 메소드
     user.findOne({ _id: decoded, token: token }, function (err, user) {
+      console.log("6. token 찾기");
+      console.log(user);
       if (err) return cb(err);
       cb(null, user);
     });

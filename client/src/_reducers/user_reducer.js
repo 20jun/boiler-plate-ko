@@ -9,6 +9,8 @@ export default function (state = {}, action) {
       return { ...state, loginSuccess: action.payload };
       break;
     case REGISTER_USER:
+      // action.payload = success : true
+      // register : { success : true }
       return { ...state, register: action.payload };
       break;
 

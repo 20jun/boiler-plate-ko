@@ -46,6 +46,7 @@ function RegisterPage(props) {
     //redux를 쓰지 않았다면 요 부분에서 axios로 값들을 보냈겠지?
 
     dispatch(registerUser(body)).then((res) => {
+      console.log("이건언제?");
       if (res.payload.success) {
         props.history.push("/login");
       } else {

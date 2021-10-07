@@ -4,11 +4,8 @@ import axios from "axios";
 import { withRouter } from "react-router-dom";
 
 function LandingPage(props) {
-  useEffect(() => {
-    axios.get("/api/hello").then((res) => console.log(res.data));
-  }, []);
-
   const onClickHandler = () => {
+    console.log("1. LandingPage에서 onClick");
     axios.get("/api/users/logout").then((res) => {
       if (res.data.success) {
         props.history.push("/login");
@@ -40,7 +37,6 @@ function LandingPage(props) {
       {/* 답변 : useSelector를 이용
       useSelector(state => state.user) */}
       <br />
-      <h2>{user.email}</h2>
 
       <button onClick={onClickHandler}>로그아웃</button>
     </div>
